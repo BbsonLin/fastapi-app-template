@@ -1,0 +1,9 @@
+{
+  "full_name": "Bobson Lin",
+  "email": "bobson801104@gmail.com",
+  "github_username": "BbsonLin",
+  "project_name": "fastapi-app",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
+  "project_short_description": "A web app using FastAPI to build an API server.",
+  "version": "0.1.0"
+}
