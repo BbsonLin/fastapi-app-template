@@ -3,7 +3,7 @@ import sys
 import secrets
 import logging
 
-from typing import Optional
+from typing import Optional, List
 from loguru import logger
 from pydantic import BaseSettings
 
@@ -15,13 +15,13 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     SQLALCHEMY_DATABASE_URI: str = None
     SQLALCHEMY_DATABASE_URI_BASE: str = None
+    ALLOWED_CORS_HOSTS: List[str] = []
+    LOG_LEVEL = logging.DEBUG
 
     POSTGRES_SERVER: Optional[str]
     POSTGRES_USER: Optional[str]
     POSTGRES_PASSWORD: Optional[str]
     POSTGRES_DB: Optional[str]
-
-    LOG_LEVEL = logging.DEBUG
 
 
 class Production(Settings):

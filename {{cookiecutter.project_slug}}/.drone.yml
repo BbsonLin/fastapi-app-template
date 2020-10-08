@@ -1,0 +1,46 @@
+---
+kind: pipeline
+name: production-py3.7
+steps:
+- name: run pytest
+  image: python:3.7
+  commands:
+    - pip install poetry
+    - poetry install
+    - export PYTHONDONTWRITEBYTECODE=1 && poetry run pytest
+  when:
+    branch:
+    - master
+
+- name: build and publish image
+  pull: if-not-exists
+  image: plugins/docker
+  settings:
+    registry: registry.hub.docker.com
+    repo: registry.hub.docker.com/your-account/your-docker-image-name
+    auto_tag: true
+    username: 
+      from_secret: DOCKERHUB_USER
+    password: 
+      from_secret: DOCKERHUB_PASSWORD
+  when:
+    branch:
+    - master
+
+- name: notify MS Teams
+  image: plugins/webhook
+  settings:
+    urls: https://outlook.office.com/webhook/some-url
+    content_type: application/json
+    template: |
+      {
+        "@type": "MessageCard",
+        "@context": "https://schema.org/extensions",
+        "title": "Drone build: {{ build.status }}",
+        "text": "[Build #{{ build.number }}]({{ build.link }}) {{ build.message }}<br/>{{ build.author }} {{ build.event }} @`{{ build.commit }}` to `{{ build.branch }}`<br/>**{{ repo.name }}**",
+        "summary": "{{ build }}, build sha: {{ build.commit }}"
+      }
+    debug: true
+  when:
+    branch:
+    - master
